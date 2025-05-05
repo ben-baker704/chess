@@ -65,6 +65,9 @@ public class ChessPiece {
         else if (type == PieceType.ROOK) {
             piece = new RookMoves();
         }
+        else if (type == PieceType.QUEEN) {
+            piece = new QueenMoves();
+        }
         else {
             piece = null;
         }
