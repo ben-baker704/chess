@@ -2,6 +2,7 @@ package chess;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Objects;
 
 //import static chess.ChessPiece.PieceType.BISHOP;
 //import static chess.ChessPiece.PieceType.ROOK;
@@ -20,6 +21,28 @@ public class ChessPiece {
     public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
         this.pieceColor = pieceColor;
         this.type = type;
+    }
+
+    @Override
+    public String toString() {
+        return "ChessPiece{" +
+                "pieceColor=" + pieceColor +
+                ", type=" + type +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        ChessPiece that = (ChessPiece) o;
+        return pieceColor == that.pieceColor && type == that.type;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(pieceColor, type);
     }
 
     /**
@@ -70,6 +93,9 @@ public class ChessPiece {
         }
         else if (type == PieceType.KNIGHT) {
             piece = new KnightMoves();
+        }
+        else if (type == PieceType.KING) {
+            piece = new KingMoves();
         }
         else {
             piece = null;
