@@ -3,7 +3,8 @@ package chess;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import static chess.ChessPiece.PieceType.BISHOP;
+//import static chess.ChessPiece.PieceType.BISHOP;
+//import static chess.ChessPiece.PieceType.ROOK;
 
 /**
  * Represents a single chess piece
@@ -58,8 +59,11 @@ public class ChessPiece {
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         PieceMovesCalculator piece;
-        if (type == BISHOP) {
+        if (type == PieceType.BISHOP) {
             piece = new BishopMoves();
+        }
+        else if (type == PieceType.ROOK) {
+            piece = new RookMoves();
         }
         else {
             piece = null;
