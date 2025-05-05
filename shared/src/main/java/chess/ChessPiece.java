@@ -68,6 +68,9 @@ public class ChessPiece {
         else if (type == PieceType.QUEEN) {
             piece = new QueenMoves();
         }
+        else if (type == PieceType.KNIGHT) {
+            piece = new KnightMoves();
+        }
         else {
             piece = null;
         }
