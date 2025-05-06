@@ -97,6 +97,9 @@ public class ChessPiece {
         else if (type == PieceType.KING) {
             piece = new KingMoves();
         }
+        else if (type == PieceType.PAWN) {
+            piece = new PawnMoves();
+        }
         else {
             piece = null;
         }
