@@ -18,7 +18,7 @@ public class ChessGame {
         this.gameBoard = new ChessBoard(other.gameBoard);
     }
     public ChessGame() {
-
+        gameBoard.resetBoard();
     }
 
     /**
@@ -142,7 +142,7 @@ public class ChessGame {
                 if (piece != null && piece.getTeamColor() != teamColor) {
                     Collection<ChessMove> allowedMoves = piece.pieceMoves(gameBoard, position);
                     for (ChessMove move : allowedMoves) {
-                        if (move.getEndPosition() == kingPosition) {
+                        if (move.getEndPosition().equals(kingPosition)) {
                             return true;
                         }
                     }
@@ -167,7 +167,7 @@ public class ChessGame {
                 ChessPosition position = new ChessPosition(row, col);
                 ChessPiece piece = gameBoard.getPiece(position);
                 if (piece != null && piece.getTeamColor() == teamColor) {
-                    Collection<ChessMove> moves = piece.pieceMoves(gameBoard, position);
+                    Collection<ChessMove> moves = validMoves(position);
                     if (!moves.isEmpty()) {
                         return false;
                     }
@@ -193,7 +193,7 @@ public class ChessGame {
                 ChessPosition position = new ChessPosition(row, col);
                 ChessPiece piece = gameBoard.getPiece(position);
                 if (piece != null && piece.getTeamColor() == teamColor) {
-                    Collection<ChessMove> moves = piece.pieceMoves(gameBoard, position);
+                    Collection<ChessMove> moves = validMoves(position);
                     if (!moves.isEmpty()) {
                         return false;
                     }
