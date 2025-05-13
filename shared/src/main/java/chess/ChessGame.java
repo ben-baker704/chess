@@ -71,9 +71,16 @@ public class ChessGame {
         if (piece == null) {
             return null;
         }
-        Collection<ChessMove> allowedMoves = piece.pieceMoves(gameBoard, startPosition);
-        ChessBoard copy = new ChessBoard(gameBoard);
-
+        Collection<ChessMove> potentialMoves = piece.pieceMoves(gameBoard, startPosition);
+        Collection<ChessMove> allowedMoves = new ArrayList<>();
+        for (ChessMove move : potentialMoves) {
+            ChessBoard boardCopy = new ChessBoard(gameBoard);
+            boardCopy.addPiece(move.getEndPosition(), piece);
+            boardCopy.addPiece(move.getStartPosition(), null);
+            if (!isInCheck(piece.getTeamColor())) {
+                allowedMoves.add(move);
+            }
+        }
         return allowedMoves;
     }
 
