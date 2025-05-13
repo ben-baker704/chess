@@ -64,21 +64,9 @@ public class ChessGame {
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
         ChessPiece piece = gameBoard.getPiece(startPosition);
-        if (piece == null) {
-            return null;
-        }
-        PieceMovesCalculator allowedMoves;
-        switch(piece.getPieceType()) {
-            case ROOK -> allowedMoves = new RookMoves();
-            case KNIGHT -> allowedMoves = new KnightMoves();
-            case BISHOP -> allowedMoves = new BishopMoves();
-            case QUEEN -> allowedMoves = new QueenMoves();
-            case KING -> allowedMoves = new KingMoves();
-            case PAWN -> allowedMoves = new PawnMoves();
-            default -> throw new IllegalStateException("Unexpected value: " + piece.getPieceType());
-        }
+        Collection<ChessMove> allowedMoves = piece.pieceMoves(gameBoard, startPosition);
 
-        return allowedMoves.pieceMoves(gameBoard, startPosition);
+        return allowedMoves;
     }
 
     /**
@@ -98,7 +86,35 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        // Locate king
+        ChessPosition kingPosition = null;
+        for (int row = 1; row <= 8; row++) {
+            for (int col = 1; col <= 8; col++) {
+                ChessPosition position = new ChessPosition(row, col);
+                ChessPiece piece = gameBoard.getPiece(position);
+                if (piece != null && piece.getTeamColor() == teamColor &&
+                        piece.getPieceType() == ChessPiece.PieceType.KING) {
+                    kingPosition = position;
+                }
+            }
+        }
+
+        // See if enemy piece can attack king
+        for (int row = 1; row <= 8; row++) {
+            for (int col = 1; col <= 8; col++) {
+                ChessPosition position = new ChessPosition(row, col);
+                ChessPiece piece = gameBoard.getPiece(position);
+                if (piece != null && piece.getTeamColor() != teamColor) {
+                    Collection<ChessMove> allowedMoves = piece.pieceMoves(gameBoard, position);
+                    for (ChessMove move : allowedMoves) {
+                        if (move.getEndPosition() == kingPosition) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     /**
@@ -108,7 +124,10 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        if (!isInCheck(teamColor)) {
+            return false;
+        }
+        return true;
     }
 
     /**
