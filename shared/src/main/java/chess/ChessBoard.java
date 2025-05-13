@@ -12,7 +12,9 @@ import java.util.Objects;
 public class ChessBoard {
     private ChessPiece[][] squares = new ChessPiece[8][8];
     public ChessBoard(ChessBoard other) {
-        squares = Arrays.copyOf(other.squares, other.squares.length);
+        for (int row = 0; row < 8; row++) {
+            squares[row] = Arrays.copyOf(other.squares[row], other.squares[row].length);
+        }
     }
     public ChessBoard() {
         
