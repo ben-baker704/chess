@@ -1,5 +1,6 @@
 package chess;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
 
@@ -10,8 +11,8 @@ import java.util.Objects;
  * signature of the existing methods.
  */
 public class ChessGame {
-    private TeamColor team_turn = TeamColor.WHITE;
-    private ChessBoard gameboard = new ChessBoard();
+    private TeamColor teamTurn = TeamColor.WHITE;
+    private ChessBoard gameBoard = new ChessBoard();
     public ChessGame() {
 
     }
@@ -20,7 +21,7 @@ public class ChessGame {
      * @return Which team's turn it is
      */
     public TeamColor getTeamTurn() {
-        return team_turn;
+        return teamTurn;
     }
 
     /**
@@ -29,7 +30,7 @@ public class ChessGame {
      * @param team the team whose turn it is
      */
     public void setTeamTurn(TeamColor team) {
-        team_turn = team;
+        teamTurn = team;
     }
 
     @Override
@@ -38,12 +39,12 @@ public class ChessGame {
             return false;
         }
         ChessGame chessGame = (ChessGame) o;
-        return team_turn == chessGame.team_turn && Objects.equals(gameboard, chessGame.gameboard);
+        return teamTurn == chessGame.teamTurn && Objects.equals(gameBoard, chessGame.gameBoard);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(team_turn, gameboard);
+        return Objects.hash(teamTurn, gameBoard);
     }
 
     /**
@@ -62,7 +63,22 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        throw new RuntimeException("Not implemented");
+        ChessPiece piece = gameBoard.getPiece(startPosition);
+        if (piece == null) {
+            return null;
+        }
+        PieceMovesCalculator allowedMoves;
+        switch(piece.getPieceType()) {
+            case ROOK -> allowedMoves = new RookMoves();
+            case KNIGHT -> allowedMoves = new KnightMoves();
+            case BISHOP -> allowedMoves = new BishopMoves();
+            case QUEEN -> allowedMoves = new QueenMoves();
+            case KING -> allowedMoves = new KingMoves();
+            case PAWN -> allowedMoves = new PawnMoves();
+            default -> throw new IllegalStateException("Unexpected value: " + piece.getPieceType());
+        }
+
+        return allowedMoves.pieceMoves(gameBoard, startPosition);
     }
 
     /**
@@ -112,7 +128,7 @@ public class ChessGame {
      * @param board the new board to use
      */
     public void setBoard(ChessBoard board) {
-        gameboard = board;
+        gameBoard = board;
     }
 
     /**
@@ -121,6 +137,6 @@ public class ChessGame {
      * @return the chessboard
      */
     public ChessBoard getBoard() {
-        return gameboard;
+        return gameBoard;
     }
 }
