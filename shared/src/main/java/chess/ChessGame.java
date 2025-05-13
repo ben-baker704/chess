@@ -13,6 +13,10 @@ import java.util.Objects;
 public class ChessGame {
     private TeamColor teamTurn = TeamColor.WHITE;
     private ChessBoard gameBoard = new ChessBoard();
+    public ChessGame(ChessGame other) {
+        this.teamTurn = other.teamTurn;
+        this.gameBoard = new ChessBoard(other.gameBoard);
+    }
     public ChessGame() {
 
     }
@@ -64,7 +68,11 @@ public class ChessGame {
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
         ChessPiece piece = gameBoard.getPiece(startPosition);
+        if (piece == null) {
+            return null;
+        }
         Collection<ChessMove> allowedMoves = piece.pieceMoves(gameBoard, startPosition);
+        ChessBoard copy = new ChessBoard(gameBoard);
 
         return allowedMoves;
     }
