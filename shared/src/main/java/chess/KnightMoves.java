@@ -9,7 +9,7 @@ public class KnightMoves implements PieceMovesCalculator{
     @Override
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition position) {
 
-        List<ChessMove> valid_moves = new ArrayList<>();
+        List<ChessMove> validMoves = new ArrayList<>();
 
         int[][] directions = {
                 {2, -1}, {2, 1}, {-2, -1}, {-2, 1}, {-1, 2}, {-1, -2}, {1, 2}, {1, -2}
@@ -29,24 +29,24 @@ public class KnightMoves implements PieceMovesCalculator{
                 continue;
             }
 
-            ChessPosition new_position = new ChessPosition(row, col);
-            ChessPiece target = board.getPiece(new_position);
+            ChessPosition newPosition = new ChessPosition(row, col);
+            ChessPiece target = board.getPiece(newPosition);
 
             if (target == null) {
-                valid_moves.add(new ChessMove(position, new_position, null));
+                validMoves.add(new ChessMove(position, newPosition, null));
             }
             else {
                 ChessPiece knight = board.getPiece(position);
                 ChessGame.TeamColor color = knight.getTeamColor();
 
                 if (target.getTeamColor() != color) {
-                    valid_moves.add(new ChessMove(position, new_position, null));
+                    validMoves.add(new ChessMove(position, newPosition, null));
                 }
             }
         }
 
 
-        return valid_moves;
+        return validMoves;
     }
 
     @Override

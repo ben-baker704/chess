@@ -11,63 +11,63 @@ public class PawnMoves implements PieceMovesCalculator {
     @Override
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition position) {
 
-        List<ChessMove> valid_moves = new ArrayList<>();
+        List<ChessMove> validMoves = new ArrayList<>();
 
         int up;
-        int up_two;
+        int upTwo;
         int[][] diagonals;
-        int starting_row;
-        int promotion_row;
+        int startingRow;
+        int promotionRow;
 
         ChessPiece pawn = board.getPiece(position);
         ChessGame.TeamColor color = pawn.getTeamColor();
 
         if (color == ChessGame.TeamColor.WHITE) {
             up = 1;
-            up_two = 2;
+            upTwo = 2;
             diagonals = new int[][] {
                     {1, -1}, {1, 1}
             };
-            starting_row = 2;
-            promotion_row = 8;
+            startingRow = 2;
+            promotionRow = 8;
         }
 
         else {
             up = -1;
-            up_two = -2;
+            upTwo = -2;
             diagonals = new int[][] {
                     {-1, -1}, {-1, 1}
             };
-            starting_row = 7;
-            promotion_row = 1;
+            startingRow = 7;
+            promotionRow = 1;
         }
 
         int row = position.getRow();
         int col = position.getColumn();
-        ChessPosition new_position = new ChessPosition(row + up, col);
-        ChessPiece target = board.getPiece(new_position);
+        ChessPosition newPosition = new ChessPosition(row + up, col);
+        ChessPiece target = board.getPiece(newPosition);
 
         // Move up 1
         if (row + up >= 1 && row + up <= 8) {
 
             if (target == null) {
-                if (new_position.getRow() == promotion_row) {
-                    valid_moves.add(new ChessMove(position, new_position, QUEEN));
-                    valid_moves.add(new ChessMove(position, new_position, BISHOP));
-                    valid_moves.add(new ChessMove(position, new_position, ROOK));
-                    valid_moves.add(new ChessMove(position, new_position, KNIGHT));
+                if (newPosition.getRow() == promotionRow) {
+                    validMoves.add(new ChessMove(position, newPosition, QUEEN));
+                    validMoves.add(new ChessMove(position, newPosition, BISHOP));
+                    validMoves.add(new ChessMove(position, newPosition, ROOK));
+                    validMoves.add(new ChessMove(position, newPosition, KNIGHT));
                 } else {
-                    valid_moves.add(new ChessMove(position, new_position, null));
+                    validMoves.add(new ChessMove(position, newPosition, null));
                 }
             }
         }
 
         // Move Up 2
-        if (starting_row == row) {
-            ChessPosition new_position_2 = new ChessPosition(row + up_two, col);
-            ChessPiece target_2 = board.getPiece(new_position_2);
-            if (target == null && target_2 == null) {
-                valid_moves.add(new ChessMove(position, new_position_2, null));
+        if (startingRow == row) {
+            ChessPosition newPosition2 = new ChessPosition(row + upTwo, col);
+            ChessPiece target2 = board.getPiece(newPosition2);
+            if (target == null && target2 == null) {
+                validMoves.add(new ChessMove(position, newPosition2, null));
             }
         }
 
@@ -83,19 +83,19 @@ public class PawnMoves implements PieceMovesCalculator {
             if (row < 1 || row > 8  || col < 1 || col > 8) {
                 continue;
             }
-            new_position = new ChessPosition(row, col);
-            target = board.getPiece(new_position);
-            if (new_position.getRow() == promotion_row && target != null && target.getTeamColor() != color) {
-                valid_moves.add(new ChessMove(position, new_position, QUEEN));
-                valid_moves.add(new ChessMove(position, new_position, BISHOP));
-                valid_moves.add(new ChessMove(position, new_position, ROOK));
-                valid_moves.add(new ChessMove(position, new_position, KNIGHT));
+            newPosition = new ChessPosition(row, col);
+            target = board.getPiece(newPosition);
+            if (newPosition.getRow() == promotionRow && target != null && target.getTeamColor() != color) {
+                validMoves.add(new ChessMove(position, newPosition, QUEEN));
+                validMoves.add(new ChessMove(position, newPosition, BISHOP));
+                validMoves.add(new ChessMove(position, newPosition, ROOK));
+                validMoves.add(new ChessMove(position, newPosition, KNIGHT));
             } else if (target != null && target.getTeamColor() != color) {
-                valid_moves.add(new ChessMove(position, new_position, null));
+                validMoves.add(new ChessMove(position, newPosition, null));
             }
         }
 
-        return valid_moves;
+        return validMoves;
     }
 
 

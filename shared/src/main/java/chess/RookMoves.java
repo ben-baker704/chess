@@ -9,7 +9,7 @@ public class RookMoves implements PieceMovesCalculator {
     @Override
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition position) {
 
-        List<ChessMove> valid_moves = new ArrayList<>();
+        List<ChessMove> validMoves = new ArrayList<>();
 
         int[][] directions = {
                 {1, 0}, {-1, 0}, {0, 1}, {0, -1}
@@ -26,23 +26,23 @@ public class RookMoves implements PieceMovesCalculator {
                 if (row < 1 || row > 8 || col < 1 || col > 8) {
                     break;}
 
-                ChessPosition new_position = new ChessPosition(row, col);
-                ChessPiece target = board.getPiece(new_position);
+                ChessPosition newPosition = new ChessPosition(row, col);
+                ChessPiece target = board.getPiece(newPosition);
 
                 if (target == null) {
-                    valid_moves.add(new ChessMove(position, new_position, null));
+                    validMoves.add(new ChessMove(position, newPosition, null));
                 }
                 else {
                     ChessPiece rook = board.getPiece(position);
                     ChessGame.TeamColor color = rook.getTeamColor();
                     if (target.getTeamColor() != color) {
-                        valid_moves.add(new ChessMove(position, new_position, null));
+                        validMoves.add(new ChessMove(position, newPosition, null));
                     }
                     break;
                 }
             }
         }
 
-        return valid_moves;
+        return validMoves;
     }
 }
