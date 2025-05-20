@@ -27,6 +27,7 @@ public class Server {
 
         // Register your endpoints and handle exceptions here.
         Spark.post("/user", this::register);
+        Spark.post("/session", this::login);
         Spark.delete("/db", this::clear);
         //This line initializes the server and can be removed once you have a functioning endpoint 
 //        Spark.init();
@@ -54,6 +55,25 @@ public class Server {
         catch (Exception e) {
             res.status(403);
             return new Gson().toJson(error.errorMessage("Error: Bad Request"));
+        }
+    }
+
+    private Object login(Request req, Response res) throws DataAccessException {
+//        ErrorMessage error;
+        try {
+            var log = new Gson().fromJson(req.body(), UserData.class);
+            // Missing data
+            if (log.username() == null || log.password() == null) {
+                res.status(400);
+                return new Gson().toJson(error.errorMessage("Error: Missing Data"));
+            }
+            var auth = service.login(log.username(), log.password());
+            res.status(200);
+            return new Gson().toJson(auth);
+        }
+        catch (Exception e) {
+            res.status(401);
+            return new Gson().toJson(error.errorMessage("Error: Invalid password"));
         }
     }
 

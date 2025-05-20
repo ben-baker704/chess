@@ -23,6 +23,16 @@ public class UserService {
         return new AuthData(data.username(), token);
     }
 
+    public AuthData login(String username, String password) throws DataAccessException{
+        UserData user = userDAO.getUser(username);
+        // Password is wrong
+        if (!password.equals(user.password())) {
+            throw new DataAccessException("Error: unauthorized");
+        }
+        String auth = authDAO.createAuth(username);
+        return new AuthData(username, auth);
+    }
+
     public void clear() throws DataAccessException {
         userDAO.clear();
         authDAO.clear();
