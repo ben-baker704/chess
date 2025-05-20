@@ -5,7 +5,7 @@ import java.util.UUID;
 
 public class MemoryAuthDAO implements AuthDAO{
     private int nextId = 1;
-    final private HashMap<Integer, String> auths = new HashMap<>();
+    private final HashMap<Integer, String> auths = new HashMap<>();
 
     @Override
     public boolean getAuth(String authToken) throws DataAccessException {
@@ -22,5 +22,10 @@ public class MemoryAuthDAO implements AuthDAO{
     @Override
     public void deleteAuth(String authToken) throws DataAccessException {
         auths.remove(authToken);
+    }
+
+    @Override
+    public void clear() throws DataAccessException {
+        auths.clear();
     }
 }

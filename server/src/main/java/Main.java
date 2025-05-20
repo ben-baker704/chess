@@ -12,7 +12,7 @@ public class Main {
         UserDAO userDAO = new MemoryUserDAO();
         GameDAO gameDAO = new MemoryGameDAO();
         var service = new UserService(authDAO, gameDAO, userDAO);
-        Server server = new Server(service);
+        Server server = new Server();
         server.run(8080);
     }
 }

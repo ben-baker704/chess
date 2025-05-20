@@ -21,6 +21,12 @@ public class UserService {
         userDAO.createUser(data.username(), data.password(), data.email());
         return new AuthData(data.username(), authDAO.createAuth());
     }
+
+    public void clear() throws DataAccessException {
+        userDAO.clear();
+        authDAO.clear();
+        gameDAO.clear();
+    }
 //    public LoginResult login(LoginRequest loginRequest) {}
 //    public void logout(LogoutRequest logoutRequest) {}
 }

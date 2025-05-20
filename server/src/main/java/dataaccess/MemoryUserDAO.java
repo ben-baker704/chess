@@ -6,7 +6,7 @@ import java.util.HashMap;
 
 public class MemoryUserDAO implements UserDAO{
     private int nextId = 1;
-    final private HashMap<String, UserData> users = new HashMap<>();
+    private final HashMap<String, UserData> users = new HashMap<>();
 
 
     @Override
@@ -24,5 +24,10 @@ public class MemoryUserDAO implements UserDAO{
     @Override
     public UserData getUser(String username) throws DataAccessException{
         return users.get(username);
+    }
+
+    @Override
+    public void clear() throws DataAccessException {
+        users.clear();
     }
 }
