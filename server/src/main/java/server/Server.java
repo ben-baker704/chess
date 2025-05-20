@@ -30,6 +30,7 @@ public class Server {
         Spark.post("/session", this::login);
         Spark.delete("/session", this::logout);
         Spark.delete("/db", this::clear);
+        Spark.get("/game", this::listGames);
 
         Spark.awaitInitialization();
         return Spark.port();
@@ -81,6 +82,21 @@ public class Server {
             service.logout(auth);
             res.status(200);
             return "{}";
+        }
+        catch (Exception e) {
+            res.status(401);
+            return new Gson().toJson(error.errorMessage("Error: not authorized"));
+        }
+    }
+
+    private Object listGames(Request req, Response res) throws DataAccessException {
+        try {
+            String auth = req.headers("authorization");
+            var games = service.listGames(auth);
+            var putGames = new HashMap<String, Object>();
+            putGames.put("games", games);
+            res.status(200);
+            return new Gson().toJson(putGames);
         }
         catch (Exception e) {
             res.status(401);

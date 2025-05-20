@@ -4,7 +4,10 @@ import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
 import dataaccess.UserDAO;
 import model.AuthData;
+import model.GameData;
 import model.UserData;
+
+import java.util.Collection;
 
 public class UserService {
     private final AuthDAO authDAO;
@@ -36,6 +39,15 @@ public class UserService {
     public void logout(String auth) throws DataAccessException {
         if (authDAO.getAuth(auth)) {
             authDAO.deleteAuth(auth);
+        }
+        else {
+            throw new DataAccessException("Error: Auth does not exist");
+        }
+    }
+
+    public Collection<GameData> listGames(String auth) throws DataAccessException {
+        if (authDAO.getAuth(auth)) {
+            return gameDAO.gamesList();
         }
         else {
             throw new DataAccessException("Error: Auth does not exist");
