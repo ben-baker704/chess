@@ -19,7 +19,8 @@ public class UserService {
 
     public AuthData register(UserData data) throws DataAccessException {
         userDAO.createUser(data.username(), data.password(), data.email());
-        return new AuthData(data.username(), authDAO.createAuth());
+        String token = authDAO.createAuth(data.username());
+        return new AuthData(data.username(), token);
     }
 
     public void clear() throws DataAccessException {

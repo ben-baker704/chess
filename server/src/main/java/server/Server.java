@@ -7,8 +7,10 @@ import model.UserData;
 import service.UserService;
 import spark.*;
 
-public class Server {
+import java.util.HashMap;
 
+public class Server {
+    private ErrorMessage error = new ErrorMessage();
     private UserService service;
     private AuthDAO authDAO = new MemoryAuthDAO();
     private GameDAO gameDAO = new MemoryGameDAO();
@@ -39,9 +41,20 @@ public class Server {
     }
 
     private Object register(Request req, Response res) throws DataAccessException {
-        var user = new Gson().fromJson(req.body(), UserData.class);
-        var auth = service.register(user);
-        return new Gson().toJson(auth);
+        try {
+            var user = new Gson().fromJson(req.body(), UserData.class);
+            // Missing data
+            if (user.username() == null || user.email() == null || user.password() == null) {
+                res.status(400);
+                return new Gson().toJson(error.errorMessage("Error: Missing Data"));
+            }
+            var auth = service.register(user);
+            res.status(200);
+            return new Gson().toJson(auth);}
+        catch (Exception e) {
+            res.status(403);
+            return new Gson().toJson(error.errorMessage("Error: Bad Request"));
+        }
     }
 
     private Object clear(Request req, Response res) throws DataAccessException {

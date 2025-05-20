@@ -4,18 +4,17 @@ import java.util.HashMap;
 import java.util.UUID;
 
 public class MemoryAuthDAO implements AuthDAO{
-    private int nextId = 1;
-    private final HashMap<Integer, String> auths = new HashMap<>();
+    private final HashMap<String, AuthData> auths = new HashMap<>();
 
     @Override
-    public boolean getAuth(String authToken) throws DataAccessException {
-        return auths.containsValue(authToken);
+    public boolean getAuth(String token) throws DataAccessException {
+        return auths.containsKey(token);
     }
 
     @Override
-    public String createAuth() throws DataAccessException {
+    public String createAuth(String username) throws DataAccessException {
         String auth = UUID.randomUUID().toString();
-        auths.put(nextId++, auth);
+        auths.put(auth, new AuthData(username, auth));
         return auth;
     }
 
