@@ -33,6 +33,15 @@ public class UserService {
         return new AuthData(username, auth);
     }
 
+    public void logout(String auth) throws DataAccessException {
+        if (authDAO.getAuth(auth)) {
+            authDAO.deleteAuth(auth);
+        }
+        else {
+            throw new DataAccessException("Error: Auth does not exist");
+        }
+    }
+
     public void clear() throws DataAccessException {
         userDAO.clear();
         authDAO.clear();
