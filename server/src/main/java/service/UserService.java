@@ -54,6 +54,15 @@ public class UserService {
         }
     }
 
+    public GameData createGame(String auth, String gameName) throws DataAccessException {
+        if (authDAO.getAuth(auth)) {
+            return gameDAO.buildGame(gameName);
+        }
+        else {
+            throw new DataAccessException("Error: Auth does not exist");
+        }
+    }
+
     public void clear() throws DataAccessException {
         userDAO.clear();
         authDAO.clear();

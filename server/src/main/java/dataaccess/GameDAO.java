@@ -5,7 +5,7 @@ import java.util.Collection;
 
 public interface GameDAO {
 
-    void createGame(String username, ChessGame.TeamColor color, String gameName)
+    GameData buildGame(String gameName)
             throws DataAccessException;
     GameData getGame(String gameID) throws DataAccessException;
     Collection<GameData> gamesList() throws DataAccessException;

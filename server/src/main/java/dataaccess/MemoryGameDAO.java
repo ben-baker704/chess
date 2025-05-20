@@ -11,16 +11,11 @@ public class MemoryGameDAO implements GameDAO{
     private final HashMap<Integer, GameData> games = new HashMap<>();
 
     @Override
-    public void createGame(String username, ChessGame.TeamColor color, String gameName) throws DataAccessException {
+    public GameData buildGame(String gameName) throws DataAccessException {
         int id = nextId++;
-        GameData game;
-        if (color == ChessGame.TeamColor.WHITE) {
-            game = new GameData(id, username, null, gameName, new ChessGame());
-        }
-        else {
-            game = new GameData(id, null, username, gameName, new ChessGame());
-        }
+        GameData game = new GameData(id, null, null, gameName, new ChessGame());
         games.put(id, game);
+        return game;
     }
 
     @Override

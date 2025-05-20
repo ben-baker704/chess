@@ -2,7 +2,7 @@ package server;
 
 import com.google.gson.Gson;
 import dataaccess.*;
-import model.AuthData;
+import model.GameData;
 import model.UserData;
 import service.UserService;
 import spark.*;
@@ -31,6 +31,7 @@ public class Server {
         Spark.delete("/session", this::logout);
         Spark.delete("/db", this::clear);
         Spark.get("/game", this::listGames);
+        Spark.post("/game", this::createGame);
 
         Spark.awaitInitialization();
         return Spark.port();
@@ -97,6 +98,26 @@ public class Server {
             putGames.put("games", games);
             res.status(200);
             return new Gson().toJson(putGames);
+        }
+        catch (Exception e) {
+            res.status(401);
+            return new Gson().toJson(error.errorMessage("Error: not authorized"));
+        }
+    }
+
+    private Object createGame(Request req, Response res) throws DataAccessException {
+        try {
+            String auth = req.headers("authorization");
+            var gameName = new Gson().fromJson(req.body(), GameData.class);
+            if (gameName.gameName() == null) {
+                res.status(400);
+                return new Gson().toJson(error.errorMessage("Error: Missing Data"));
+            }
+            HashMap<String, Integer> result = new HashMap<>();
+            GameData game = service.createGame(auth, gameName.toString());
+            result.put("gameID", game.gameID());
+            res.status(200);
+            return new Gson().toJson(result);
         }
         catch (Exception e) {
             res.status(401);
