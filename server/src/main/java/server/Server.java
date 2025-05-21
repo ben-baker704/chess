@@ -10,6 +10,7 @@ import service.UserService;
 import spark.*;
 
 import java.util.HashMap;
+import java.util.Objects;
 
 public class Server {
     private ErrorMessage error = new ErrorMessage();
@@ -137,11 +138,18 @@ public class Server {
                 res.status(401);
                 return new Gson().toJson(error.errorMessage("Error: not authorized"));
             }
-            if (playerJoin.gameID() == null || playerJoin.color() == null) {
+            if (playerJoin.gameID() == null || playerJoin.playerColor() == null) {
                 res.status(400);
                 return new Gson().toJson(error.errorMessage("Error: Missing Data"));
             }
-            service.joinGame(auth, playerJoin.gameID(), playerJoin.color());
+            if (playerJoin.playerColor().equals("WHITE")) {
+            service.joinGame(auth, playerJoin.gameID(), ChessGame.TeamColor.WHITE);}
+            else if (playerJoin.playerColor().equals("BLACK")) {
+                service.joinGame(auth, playerJoin.gameID(), ChessGame.TeamColor.BLACK);}
+            else {
+                res.status(400);
+                return new Gson().toJson(error.errorMessage("Error: Missing Data"));
+            }
             res.status(200);
             return "{}";
         }

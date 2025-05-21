@@ -2,5 +2,5 @@ package model;
 
 import chess.ChessGame;
 
-public record JoinData(ChessGame.TeamColor color, String gameID) {
+public record JoinData(String playerColor, String gameID) {
 }
