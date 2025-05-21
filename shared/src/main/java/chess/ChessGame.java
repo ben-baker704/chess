@@ -118,6 +118,21 @@ public class ChessGame {
         }
     }
 
+    public boolean checkKing(int row, int col, ChessGame.TeamColor teamColor,
+                             ChessPosition kingPosition) {
+        ChessPosition position = new ChessPosition(row, col);
+        ChessPiece piece = gameBoard.getPiece(position);
+        if (piece != null && piece.getTeamColor() != teamColor) {
+            Collection<ChessMove> allowedMoves = piece.pieceMoves(gameBoard, position);
+            for (ChessMove move : allowedMoves) {
+                if (move.getEndPosition().equals(kingPosition)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     /**
      * Determines if the given team is in check
      *
@@ -141,15 +156,8 @@ public class ChessGame {
         // See if enemy piece can attack king
         for (int row = 1; row <= 8; row++) {
             for (int col = 1; col <= 8; col++) {
-                ChessPosition position = new ChessPosition(row, col);
-                ChessPiece piece = gameBoard.getPiece(position);
-                if (piece != null && piece.getTeamColor() != teamColor) {
-                    Collection<ChessMove> allowedMoves = piece.pieceMoves(gameBoard, position);
-                    for (ChessMove move : allowedMoves) {
-                        if (move.getEndPosition().equals(kingPosition)) {
-                            return true;
-                        }
-                    }
+                if (checkKing(row, col, teamColor, kingPosition)) {
+                    return true;
                 }
             }
         }
