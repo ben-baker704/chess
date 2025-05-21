@@ -1,4 +1,5 @@
 package service;
+import chess.ChessGame;
 import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
@@ -63,11 +64,20 @@ public class UserService {
         }
     }
 
+    public void joinGame(String auth, String gameID, ChessGame.TeamColor color)
+            throws DataAccessException {
+        if (authDAO.getAuth(auth)) {
+            String username = authDAO.getUsername(auth);
+            gameDAO.updateGame(gameID, color, username);
+        }
+        else {
+            throw new DataAccessException("Error: Auth does not exist");
+        }
+    }
+
     public void clear() throws DataAccessException {
         userDAO.clear();
         authDAO.clear();
         gameDAO.clear();
     }
-//    public LoginResult login(LoginRequest loginRequest) {}
-//    public void logout(LogoutRequest logoutRequest) {}
 }

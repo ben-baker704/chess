@@ -1,8 +1,10 @@
 package server;
 
+import chess.ChessGame;
 import com.google.gson.Gson;
 import dataaccess.*;
 import model.GameData;
+import model.JoinData;
 import model.UserData;
 import service.UserService;
 import spark.*;
@@ -32,6 +34,7 @@ public class Server {
         Spark.delete("/db", this::clear);
         Spark.get("/game", this::listGames);
         Spark.post("/game", this::createGame);
+        Spark.put("/game", this::joinGame);
 
         Spark.awaitInitialization();
         return Spark.port();
@@ -122,6 +125,29 @@ public class Server {
         catch (Exception e) {
             res.status(401);
             return new Gson().toJson(error.errorMessage("Error: not authorized"));
+        }
+    }
+
+    private Object joinGame(Request req, Response res) throws DataAccessException {
+        try {
+            String auth = req.headers("authorization");
+            var playerJoin = new Gson().fromJson(req.body(), JoinData.class);
+            // Missing data
+            if (!authDAO.getAuth(auth)) {
+                res.status(401);
+                return new Gson().toJson(error.errorMessage("Error: not authorized"));
+            }
+            if (playerJoin.gameID() == null || playerJoin.color() == null) {
+                res.status(400);
+                return new Gson().toJson(error.errorMessage("Error: Missing Data"));
+            }
+            service.joinGame(auth, playerJoin.gameID(), playerJoin.color());
+            res.status(200);
+            return "{}";
+        }
+        catch (Exception e) {
+            res.status(403);
+            return new Gson().toJson(error.errorMessage("Error: Already taken"));
         }
     }
 

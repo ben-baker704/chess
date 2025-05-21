@@ -37,12 +37,18 @@ public class MemoryGameDAO implements GameDAO{
                         game.gameName(), game.game());
                 games.put(game.gameID(), updated);
             }
+            else {
+                throw new DataAccessException("Error: Invalid");
+            }
         }
         else if (color == ChessGame.TeamColor.BLACK) {
             if (game.blackUsername() == null) {
                 GameData updated = new GameData(game.gameID(), game.whiteUsername(), username,
                         game.gameName(), game.game());
                 games.put(game.gameID(), updated);
+            }
+            else {
+                throw new DataAccessException("Error: Invalid");
             }
         }
     }
