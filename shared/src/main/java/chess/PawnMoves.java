@@ -8,6 +8,14 @@ import static chess.ChessPiece.PieceType.*;
 
 public class PawnMoves implements PieceMovesCalculator {
 
+    private void addPromotedMoves(ChessPosition position, ChessPosition newPosition,
+                                  Collection<ChessMove> validMoves) {
+        validMoves.add(new ChessMove(position, newPosition, QUEEN));
+        validMoves.add(new ChessMove(position, newPosition, BISHOP));
+        validMoves.add(new ChessMove(position, newPosition, ROOK));
+        validMoves.add(new ChessMove(position, newPosition, KNIGHT));
+    }
+
     @Override
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition position) {
 
@@ -52,10 +60,7 @@ public class PawnMoves implements PieceMovesCalculator {
 
             if (target == null) {
                 if (newPosition.getRow() == promotionRow) {
-                    validMoves.add(new ChessMove(position, newPosition, QUEEN));
-                    validMoves.add(new ChessMove(position, newPosition, BISHOP));
-                    validMoves.add(new ChessMove(position, newPosition, ROOK));
-                    validMoves.add(new ChessMove(position, newPosition, KNIGHT));
+                    addPromotedMoves(position, newPosition, validMoves);
                 } else {
                     validMoves.add(new ChessMove(position, newPosition, null));
                 }
@@ -86,10 +91,7 @@ public class PawnMoves implements PieceMovesCalculator {
             newPosition = new ChessPosition(row, col);
             target = board.getPiece(newPosition);
             if (newPosition.getRow() == promotionRow && target != null && target.getTeamColor() != color) {
-                validMoves.add(new ChessMove(position, newPosition, QUEEN));
-                validMoves.add(new ChessMove(position, newPosition, BISHOP));
-                validMoves.add(new ChessMove(position, newPosition, ROOK));
-                validMoves.add(new ChessMove(position, newPosition, KNIGHT));
+                addPromotedMoves(position, newPosition, validMoves);
             } else if (target != null && target.getTeamColor() != color) {
                 validMoves.add(new ChessMove(position, newPosition, null));
             }
