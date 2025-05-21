@@ -118,7 +118,7 @@ public class Server {
                 return new Gson().toJson(error.errorMessage("Error: Missing Data"));
             }
             HashMap<String, Integer> result = new HashMap<>();
-            GameData game = service.createGame(auth, gameName.toString());
+            GameData game = service.createGame(auth, gameName.gameName());
             result.put("gameID", game.gameID());
             res.status(200);
             return new Gson().toJson(result);
