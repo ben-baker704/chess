@@ -1,5 +1,6 @@
 package service;
 import chess.ChessGame;
+import com.google.gson.Gson;
 import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
@@ -23,6 +24,10 @@ public class UserService {
 
     public AuthData register(UserData data) throws DataAccessException {
         userDAO.createUser(data.username(), data.password(), data.email());
+        // Missing data
+        if (data.username() == null || data.email() == null || data.password() == null) {
+            throw new DataAccessException("Error: Empty field");
+        }
         String token = authDAO.createAuth(data.username());
         return new AuthData(data.username(), token);
     }
