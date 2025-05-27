@@ -51,7 +51,7 @@ public class Server {
         Spark.awaitStop();
     }
 
-    private Object register(Request req, Response res) throws DataAccessException {
+    private Object register(Request req, Response res) {
         try {
             var user = new Gson().fromJson(req.body(), UserData.class);
             var auth = service.register(user);
@@ -67,7 +67,7 @@ public class Server {
         }
     }
 
-    private Object login(Request req, Response res) throws DataAccessException {
+    private Object login(Request req, Response res) {
         try {
             var log = new Gson().fromJson(req.body(), UserData.class);
             // Missing data
@@ -85,7 +85,7 @@ public class Server {
         }
     }
 
-    private Object logout(Request req, Response res) throws DataAccessException {
+    private Object logout(Request req, Response res) {
         try {
             String auth = req.headers("authorization");
             service.logout(auth);
@@ -98,7 +98,7 @@ public class Server {
         }
     }
 
-    private Object listGames(Request req, Response res) throws DataAccessException {
+    private Object listGames(Request req, Response res) {
         try {
             String auth = req.headers("authorization");
             var games = service.listGames(auth);
@@ -113,7 +113,7 @@ public class Server {
         }
     }
 
-    private Object createGame(Request req, Response res) throws DataAccessException {
+    private Object createGame(Request req, Response res) {
         try {
             String auth = req.headers("authorization");
             var gameName = new Gson().fromJson(req.body(), GameData.class);
@@ -133,7 +133,7 @@ public class Server {
         }
     }
 
-    private Object joinGame(Request req, Response res) throws DataAccessException {
+    private Object joinGame(Request req, Response res) {
         try {
             String auth = req.headers("authorization");
             var playerJoin = new Gson().fromJson(req.body(), JoinData.class);
@@ -163,9 +163,15 @@ public class Server {
         }
     }
 
-    private Object clear(Request req, Response res) throws DataAccessException {
-        service.clear();
-        res.status(200);
-        return "{}";
+    private Object clear(Request req, Response res) {
+        try {
+            service.clear();
+            res.status(200);
+            return "{}";
+        }
+        catch (Exception e) {
+            res.status(500);
+            return new Gson().toJson(error.errorMessage("Error: Could not clear"));
+        }
     }
 }

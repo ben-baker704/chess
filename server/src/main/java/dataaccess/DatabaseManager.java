@@ -43,12 +43,11 @@ public class DatabaseManager {
      */
     static Connection getConnection() throws DataAccessException {
         try {
-            //do not wrap the following line with a try-with-resources
             var conn = DriverManager.getConnection(connectionUrl, dbUsername, dbPassword);
             conn.setCatalog(databaseName);
             return conn;
-        } catch (SQLException ex) {
-            throw new DataAccessException("failed to get connection", ex);
+        } catch (Exception e) {
+            throw new DataAccessException("Failed to get connection");
         }
     }
 

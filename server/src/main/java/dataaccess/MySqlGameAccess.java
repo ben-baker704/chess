@@ -85,13 +85,17 @@ public class MySqlGameAccess implements GameDAO {
     @Override
     public void updateGame(String gameID, ChessGame.TeamColor color, String username) throws DataAccessException {
         String column = (color == ChessGame.TeamColor.WHITE) ? "whiteUsername" : "blackUsername";
-        String sql = "UPDATE game SET " + column + " = ? WHERE gameID = ?";
+        String sql = "UPDATE game SET " + column + " = ? WHERE gameID = ? AND " + column + " IS NULL";
         try (Connection connection = DatabaseManager.getConnection();
             PreparedStatement statement = connection.prepareStatement(sql)) {
 
             statement.setString(1, username);
             statement.setInt(2, Integer.parseInt(gameID));
-            statement.executeUpdate();
+            int affectedRows = statement.executeUpdate();
+
+            if (affectedRows == 0) {
+                throw new DataAccessException("Can't update game");
+            }
 
         } catch (Exception e) {
             throw new DataAccessException("Can't update game");
