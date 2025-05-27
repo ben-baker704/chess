@@ -9,6 +9,7 @@ import model.UserData;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mindrot.jbcrypt.BCrypt;
 import service.UserService;
 
 import java.util.ArrayList;
@@ -28,7 +29,8 @@ class UserServiceTest {
 
     @BeforeEach
     void initialize() {
-        userData = new UserData("user", "pass", "mail");
+        String hashPassword = BCrypt.hashpw("pass", BCrypt.gensalt());
+        userData = new UserData("user", hashPassword, "mail");
         gameData = new GameData(1, "white",
                 "black", "name", new ChessGame());
         joinData = new JoinData("WHITE", "1");

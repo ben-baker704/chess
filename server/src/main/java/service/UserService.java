@@ -8,6 +8,7 @@ import dataaccess.UserDAO;
 import model.AuthData;
 import model.GameData;
 import model.UserData;
+import org.mindrot.jbcrypt.BCrypt;
 
 import java.util.Collection;
 
@@ -34,8 +35,8 @@ public class UserService {
 
     public AuthData login(String username, String password) throws DataAccessException{
         UserData user = userDAO.getUser(username);
-        // Password is wrong
-        if (!password.equals(user.password())) {
+        // User does not exist or password is wrong
+        if (user == null || !BCrypt.checkpw(password, user.password())) {
             throw new DataAccessException("Error: unauthorized");
         }
         String auth = authDAO.createAuth(username);
