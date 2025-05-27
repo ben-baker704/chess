@@ -8,7 +8,7 @@ public class MySqlAuthAccess implements AuthDAO {
     @Override
     public String createAuth(String username) throws DataAccessException {
         String auth = UUID.randomUUID().toString();
-        String sql = "INSERT INTO auth (auth, username) VALUES (?, ?)";
+        String sql = "INSERT INTO auth (authToken, username) VALUES (?, ?)";
         try (Connection connection = DatabaseManager.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, auth);

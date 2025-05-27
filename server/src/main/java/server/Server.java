@@ -15,11 +15,16 @@ import java.util.Objects;
 public class Server {
     private ErrorMessage error = new ErrorMessage();
     private UserService service;
-    private AuthDAO authDAO = new MemoryAuthDAO();
-    private GameDAO gameDAO = new MemoryGameDAO();
-    private UserDAO userDAO = new MemoryUserDAO();
+    private AuthDAO authDAO = new MySqlAuthAccess();
+    private GameDAO gameDAO = new MySqlGameAccess();
+    private UserDAO userDAO;
 
     public Server() {
+        try {
+            userDAO = new MySqlUserAccess();
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
         this.service = new UserService(authDAO, gameDAO, userDAO);
     }
 

@@ -18,7 +18,7 @@ public class MySqlUserAccess implements UserDAO {
     @Override
     public UserData getUser(String username) throws DataAccessException {
         try (var conn = DatabaseManager.getConnection()) {
-            var statement = "SELECT username, password, email FROM user  WHERE username=?";
+            var statement = "SELECT username, password, email FROM user  WHERE username = ?";
             try (var ps = conn.prepareStatement(statement)) {
                 ps.setString(1, username);
                 try (var rs = ps.executeQuery()) {
@@ -52,7 +52,7 @@ public class MySqlUserAccess implements UserDAO {
 
     @Override
     public void clear() throws DataAccessException {
-        var statement = "TRUNCATE user";
+        var statement = "DELETE FROM user";
         executeUpdate(statement);
     }
 
@@ -96,7 +96,6 @@ public class MySqlUserAccess implements UserDAO {
                     var param = params[i];
                     if (param instanceof String p) ps.setString(i + 1, p);
                     else if (param instanceof Integer p) ps.setInt(i + 1, p);
-                    else if (param instanceof UserData p) ps.setString(i + 1, p.toString());
                     else if (param == null) ps.setNull(i + 1, NULL);
                 }
                 ps.executeUpdate();
@@ -109,7 +108,7 @@ public class MySqlUserAccess implements UserDAO {
                 return 0;
             }
         } catch (SQLException e) {
-            throw new DataAccessException("unable to update database: %s, %s");
+            throw new DataAccessException("unable to update database");
         }
     }
 
