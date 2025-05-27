@@ -35,10 +35,19 @@ public class MySqlUserAccess implements UserDAO {
 
     @Override
     public UserData createUser(String username, String password, String email) throws DataAccessException {
-        var statement = "INSERT INTO user (username, password, email) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO user (username, password, email) VALUES (?, ?, ?)";
         String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
-        var id = executeUpdate(statement, username, hashedPassword, email);
-        return new UserData(username, hashedPassword, email);
+        try (Connection connection = DatabaseManager.getConnection();
+            PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, username);
+            statement.setString(2, hashedPassword);
+            statement.setString(3, email);
+            statement.executeUpdate();
+            return new UserData(username, hashedPassword, email);
+        }
+        catch (Exception e) {
+            throw new DataAccessException("Can't create user");
+        }
     }
 
     @Override
@@ -67,7 +76,8 @@ public class MySqlUserAccess implements UserDAO {
               gameID INT PRIMARY KEY AUTO_INCREMENT,
               gameName VARCHAR(256) NOT NULL,
               whiteUsername VARCHAR(256),
-              blackUsername VARCHAR(256)
+              blackUsername VARCHAR(256),
+              json TEXT
             )
             """
     };
