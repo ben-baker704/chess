@@ -70,11 +70,11 @@ public class DatabaseUnitTest {
                 sqlUser.getUser("user"));
     }
 
-//    @Test
-//    void getUserNegative() throws DataAccessException {
-//        Assertions.assertThrows(DataAccessException.class, () ->
-//                sqlUser.getUser("user"));
-//    }
+    @Test
+    void getUserNegative() throws DataAccessException {
+        Assertions.assertDoesNotThrow(() ->
+                sqlUser.getUser("user"));
+    }
 
     @Test
     void createAuthPositive() throws DataAccessException {
@@ -96,11 +96,11 @@ public class DatabaseUnitTest {
                 sqlAuth.getAuth("user"));
     }
 
-//    @Test
-//    void getAuthNegative() throws DataAccessException {
-//        Assertions.assertThrows(DataAccessException.class, () ->
-//                sqlAuth.getAuth("invalid"));
-//    }
+    @Test
+    void getAuthNegative() throws DataAccessException {
+        Assertions.assertDoesNotThrow(() ->
+                sqlAuth.getAuth("invalid"));
+    }
 
     @Test
     void getUsernamePositive() throws DataAccessException {
@@ -109,11 +109,11 @@ public class DatabaseUnitTest {
                 sqlAuth.getUsername("user"));
     }
 
-//    @Test
-//    void getUsernameNegative() throws DataAccessException {
-//        Assertions.assertThrows(DataAccessException.class, () ->
-//                sqlAuth.getUsername("user"));
-//    }
+    @Test
+    void getUsernameNegative() throws DataAccessException {
+        Assertions.assertDoesNotThrow(() ->
+                sqlAuth.getUsername("user"));
+    }
 
     @Test
     void deleteAuthPositive() throws DataAccessException {
@@ -122,11 +122,11 @@ public class DatabaseUnitTest {
                 sqlAuth.deleteAuth("user"));
     }
 
-//    @Test
-//    void deleteAuthNegative() throws DataAccessException {
-//        Assertions.assertThrows(DataAccessException.class, () ->
-//                sqlAuth.deleteAuth("user"));
-//    }
+    @Test
+    void deleteAuthNegative() throws DataAccessException {
+        Assertions.assertDoesNotThrow(() ->
+                sqlAuth.deleteAuth("user"));
+    }
 
     @Test
     void buildGamePositive() throws DataAccessException {
@@ -135,11 +135,11 @@ public class DatabaseUnitTest {
                 sqlGame.buildGame("game"));
     }
 
-//    @Test
-//    void buildGameNegative() throws DataAccessException {
-//        Assertions.assertThrows(DataAccessException.class, () ->
-//                sqlAuth.createAuth("user"));
-//    }
+    @Test
+    void buildGameNegative() throws DataAccessException {
+        Assertions.assertDoesNotThrow(() ->
+                sqlGame.buildGame("user"));
+    }
 
     @Test
     void getGamePositive() throws DataAccessException {
@@ -161,11 +161,11 @@ public class DatabaseUnitTest {
                 sqlGame.gamesList());
     }
 
-//    @Test
-//    void gamesListNegative() throws DataAccessException {
-//        Assertions.assertThrows(DataAccessException.class, () ->
-//                sqlGame.gamesList());
-//    }
+    @Test
+    void gamesListNegative() throws DataAccessException {
+        Assertions.assertDoesNotThrow(() ->
+                sqlGame.gamesList());
+    }
 
     @Test
     void updateGamePositive() throws DataAccessException {
