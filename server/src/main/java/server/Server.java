@@ -57,13 +57,22 @@ public class Server {
             var auth = service.register(user);
             res.status(200);
             return new Gson().toJson(auth);}
-        catch (Exception e) {
+        catch (DataAccessException e) {
             if (e.getMessage().equals("Error: Empty field")) {
                 res.status(400);
                 return new Gson().toJson(error.errorMessage("Error: Empty field"));
             }
-            res.status(403);
-            return new Gson().toJson(error.errorMessage("Error: Bad Request"));
+            else if (e.getMessage().equals("Can't create user")) {
+                res.status(403);
+                return new Gson().toJson(error.errorMessage("Error: Bad Request"));
+            }
+            res.status(500);
+            return new Gson().toJson(error.errorMessage("SQL Error Register"));
+
+        }
+        catch (Exception e) {
+            res.status(500);
+            return new Gson().toJson(error.errorMessage("Server Error"));
         }
     }
 
@@ -79,9 +88,16 @@ public class Server {
             res.status(200);
             return new Gson().toJson(auth);
         }
-        catch (Exception e) {
+        catch (DataAccessException e) {
+            if (!"Error: unauthorized".equals(e.getMessage())) {
+                res.status(500);
+                return new Gson().toJson(error.errorMessage("SQL Error Login"));}
             res.status(401);
             return new Gson().toJson(error.errorMessage("Error: Invalid password"));
+        }
+        catch (Exception e) {
+            res.status(500);
+            return new Gson().toJson(error.errorMessage("Server Error"));
         }
     }
 
@@ -92,9 +108,16 @@ public class Server {
             res.status(200);
             return "{}";
         }
-        catch (Exception e) {
+        catch (DataAccessException e) {
+            if ("SQL Error".equals(e.getMessage())) {
+                res.status(500);
+                return new Gson().toJson(error.errorMessage("SQL Error Logout"));}
             res.status(401);
             return new Gson().toJson(error.errorMessage("Error: not authorized"));
+        }
+        catch (Exception e) {
+            res.status(500);
+            return new Gson().toJson(error.errorMessage("Server Error"));
         }
     }
 
@@ -107,9 +130,16 @@ public class Server {
             res.status(200);
             return new Gson().toJson(putGames);
         }
-        catch (Exception e) {
+        catch (DataAccessException e) {
+            if (!"Error: Auth does not exist".equals(e.getMessage())) {
+                res.status(500);
+                return new Gson().toJson(error.errorMessage("SQL Error List Games"));}
             res.status(401);
             return new Gson().toJson(error.errorMessage("Error: not authorized"));
+        }
+        catch (Exception e) {
+            res.status(500);
+            return new Gson().toJson(error.errorMessage("Server Error"));
         }
     }
 
@@ -127,9 +157,16 @@ public class Server {
             res.status(200);
             return new Gson().toJson(result);
         }
-        catch (Exception e) {
+        catch (DataAccessException e) {
+            if (!"Error: Auth does not exist".equals(e.getMessage())) {
+                res.status(500);
+                return new Gson().toJson(error.errorMessage("SQL Error Create Game"));}
             res.status(401);
             return new Gson().toJson(error.errorMessage("Error: not authorized"));
+        }
+        catch (Exception e) {
+            res.status(500);
+            return new Gson().toJson(error.errorMessage("Server Error"));
         }
     }
 
@@ -147,7 +184,7 @@ public class Server {
                 return new Gson().toJson(error.errorMessage("Error: Missing Data"));
             }
             if (playerJoin.playerColor().equals("WHITE")) {
-            service.joinGame(auth, playerJoin.gameID(), ChessGame.TeamColor.WHITE);}
+                service.joinGame(auth, playerJoin.gameID(), ChessGame.TeamColor.WHITE);}
             else if (playerJoin.playerColor().equals("BLACK")) {
                 service.joinGame(auth, playerJoin.gameID(), ChessGame.TeamColor.BLACK);}
             else {
@@ -158,9 +195,15 @@ public class Server {
             return "{}";
         }
         catch (Exception e) {
-            res.status(403);
-            return new Gson().toJson(error.errorMessage("Error: Already taken"));
+            if (!"SQL Error".equals(e.getMessage())) {
+                res.status(403);
+                return new Gson().toJson(error.errorMessage("Error: Already taken"));
+            } else {
+                res.status(500);
+                return new Gson().toJson(error.errorMessage("Server Error"));
+            }
         }
+
     }
 
     private Object clear(Request req, Response res) {

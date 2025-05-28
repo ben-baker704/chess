@@ -94,10 +94,13 @@ public class MySqlGameAccess implements GameDAO {
             int affectedRows = statement.executeUpdate();
 
             if (affectedRows == 0) {
-                throw new DataAccessException("Can't update game");
+                throw new DataAccessException("Error: already taken");
             }
-
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
+            if ("Failed to get connection".equals(e.getMessage())) {
+                throw new DataAccessException("SQL Error");
+            }
             throw new DataAccessException("Can't update game");
         }
 

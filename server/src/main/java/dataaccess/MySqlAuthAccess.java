@@ -34,6 +34,9 @@ public class MySqlAuthAccess implements AuthDAO {
             }
         }
         catch (Exception e) {
+            if ("Failed to get connection".equals(e.getMessage())) {
+                throw new DataAccessException("SQL Error");
+            }
             throw new DataAccessException("Can't verify auth token");
         }
         return false;
@@ -48,6 +51,9 @@ public class MySqlAuthAccess implements AuthDAO {
             statement.executeUpdate();
         }
         catch (Exception e) {
+            if ("Failed to get connection".equals(e.getMessage())) {
+                throw new DataAccessException("SQL Error");
+            }
             throw new DataAccessException("Can't delete auth token");
         }
 

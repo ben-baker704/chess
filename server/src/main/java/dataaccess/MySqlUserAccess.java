@@ -46,6 +46,9 @@ public class MySqlUserAccess implements UserDAO {
             return new UserData(username, hashedPassword, email);
         }
         catch (Exception e) {
+            if ("Failed to get connection".equals(e.getMessage())) {
+                throw new DataAccessException("SQL Error");
+            }
             throw new DataAccessException("Can't create user");
         }
     }
