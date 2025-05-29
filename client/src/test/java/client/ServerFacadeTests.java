@@ -76,6 +76,19 @@ public class ServerFacadeTests {
     }
 
     @Test
+    void listGamesPositive() throws Exception {
+        UserData userData = new UserData("user", "pass", "mail");
+        AuthData data = facade.register(userData);
+        Assertions.assertTrue(facade.listGames(data.authToken()).isEmpty());
+    }
+
+    @Test
+    void listGamesNegative() throws Exception {
+        Assertions.assertThrows(Exception.class, () ->
+                facade.listGames("invalid"));
+    }
+
+    @Test
     void clearPositive() throws Exception {
         Assertions.assertDoesNotThrow(() -> facade.clear());
     }

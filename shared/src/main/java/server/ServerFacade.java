@@ -2,11 +2,14 @@ package server;
 
 import com.google.gson.Gson;
 import model.AuthData;
+import model.GameData;
 import model.LoginRequest;
 import model.UserData;
 
 import java.io.*;
 import java.net.*;
+import java.util.ArrayList;
+import java.util.Collection;
 
 
 public class ServerFacade {
@@ -31,6 +34,13 @@ public class ServerFacade {
     public void logout(String auth) throws Exception {
         var path = "/session";
         this.makeRequest("DELETE", path, null, null, auth);
+    }
+
+    public Collection<GameData> listGames(String auth) throws Exception {
+        var path = "/game";
+        record listGameResponse(Collection<GameData> games) {}
+        var response = this.makeRequest("GET", path, null, listGameResponse.class, auth);
+        return response.games();
     }
 
     public void clear() throws Exception {
