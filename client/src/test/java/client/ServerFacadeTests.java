@@ -1,5 +1,7 @@
 package client;
 
+import dataaccess.DataAccessException;
+import model.AuthData;
 import model.UserData;
 import org.junit.jupiter.api.*;
 import server.Server;
@@ -18,14 +20,18 @@ public class ServerFacadeTests {
         facade = new ServerFacade("http://localhost:" + Integer.toString(port));
     }
 
-    @AfterAll
-    static void stopServer() {
+    @AfterEach
+    void clearFacade() {
         try {
             facade.clear();
         }
         catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @AfterAll
+    static void stopServer() {
         server.stop();
     }
 
@@ -41,6 +47,32 @@ public class ServerFacadeTests {
     void registerNegative() throws Exception {
         UserData data = new UserData(null, "pass", "mail");
         Assertions.assertThrows(Exception.class, () -> facade.register(data));
+    }
+
+    @Test
+    void loginPositive() throws Exception {
+        UserData data = new UserData("user", "pass", "mail");
+        facade.register(data);
+        var authData = facade.login("user", "pass");
+        Assertions.assertTrue(authData.authToken().length() > 10);
+    }
+
+    @Test
+    void loginNegative() throws Exception {
+        Assertions.assertThrows(Exception.class, () -> facade.login("user", "pass"));
+    }
+
+    @Test
+    void logoutPositive() throws Exception {
+        UserData userData = new UserData("user", "pass", "mail");
+        AuthData data = facade.register(userData);
+        Assertions.assertDoesNotThrow(() -> facade.logout(data.authToken()));
+    }
+
+    @Test
+    void logoutNegative() throws Exception {
+        Assertions.assertThrows(Exception.class, () ->
+                facade.logout("invalid"));
     }
 
     @Test
