@@ -1,5 +1,7 @@
 package ui;
 
+import model.AuthData;
+import model.UserData;
 import server.ServerFacade;
 
 import java.util.Arrays;
@@ -22,12 +24,41 @@ public class ChessClient {
             var cmd = (tokens.length > 0) ? tokens[0] : "help";
             var params = Arrays.copyOfRange(tokens, 1, tokens.length);
             return switch(cmd) {
+                case "register" -> register(params);
+                case "login" -> login(params);
                 default -> help();
             };
         }
         catch (Exception e) {
             return e.getMessage();
         }
+    }
+
+    public String register(String... params) throws Exception {
+        assertSignedOut();
+        if (params.length == 3) {
+            String username = params[0];
+            String password = params[1];
+            String email = params[2];
+            UserData userData = new UserData(username, password, email);
+            AuthData authData = server.register(userData);
+            visitorName = username;
+            this.state = State.POSTLOGIN;
+            return String.format("Registered as %s", visitorName);
+        }
+        throw new Exception("Error: expected three parameters");
+    }
+
+    public String login(String... params) throws Exception {
+        assertSignedOut();
+        if (params.length == 2) {
+            String username = params[0];
+            String password = params[1];
+            visitorName = username;
+            this.state = State.POSTLOGIN;
+            return String.format("You signed in as %s.", visitorName);
+        }
+        throw new Exception("Error: expected two parameters");
     }
 
     public String help() {
