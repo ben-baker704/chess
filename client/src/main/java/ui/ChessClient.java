@@ -1,10 +1,13 @@
 package ui;
 
 import model.AuthData;
+import model.GameData;
 import model.UserData;
 import server.ServerFacade;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ChessClient {
 
@@ -12,6 +15,9 @@ public class ChessClient {
     private final ServerFacade server;
     private final String serverUrl;
     private State state = State.PRELOGIN;
+    private final Map<String, String> auths = new HashMap<>();
+    private final Map<Integer, String> games = new HashMap<>();
+    private String userAuth = null;
 
     public ChessClient(String serverUrl) {
         server = new ServerFacade(serverUrl);
@@ -26,6 +32,9 @@ public class ChessClient {
             return switch(cmd) {
                 case "register" -> register(params);
                 case "login" -> login(params);
+                case "logout" -> logout();
+                case "create" -> create(params);
+                case "quit" -> "quit";
                 default -> help();
             };
         }
@@ -42,6 +51,8 @@ public class ChessClient {
             String email = params[2];
             UserData userData = new UserData(username, password, email);
             AuthData authData = server.register(userData);
+            auths.put(username, authData.authToken());
+            userAuth = authData.authToken();
             visitorName = username;
             this.state = State.POSTLOGIN;
             return String.format("Registered as %s", visitorName);
@@ -54,11 +65,35 @@ public class ChessClient {
         if (params.length == 2) {
             String username = params[0];
             String password = params[1];
+            AuthData authData = server.login(username, password);
+            auths.put(username, authData.authToken());
+            userAuth = authData.authToken();
             visitorName = username;
             this.state = State.POSTLOGIN;
             return String.format("You signed in as %s.", visitorName);
         }
         throw new Exception("Error: expected two parameters");
+    }
+
+    public String logout() throws Exception {
+        assertSignedIn();
+        server.logout(userAuth);
+        auths.remove(visitorName);
+        userAuth = null;
+        visitorName = null;
+        this.state = State.PRELOGIN;
+        return "Logged out";
+    }
+
+    public String create(String... params) throws Exception {
+        assertSignedIn();
+        if (params.length == 1) {
+            String gameName = params[0];
+            GameData game = server.createGame(userAuth, gameName);
+            games.put(game.gameID(), gameName);
+            return String.format("Created game '%s'", gameName);
+        }
+        throw new Exception("Error: expected one parameter");
     }
 
     public String help() {
