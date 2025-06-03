@@ -43,6 +43,13 @@ public class ServerFacade {
         return response.games();
     }
 
+    public GameData createGame(String auth, String gameName) throws Exception {
+        var path = "/game";
+        record createGameRequest(String gameName) {}
+        var request = new createGameRequest(gameName);
+        return this.makeRequest("POST", path, request, GameData.class, auth);
+    }
+
     public void clear() throws Exception {
         var path = "/db";
         this.makeRequest("DELETE", path, null, null, null);
