@@ -1,5 +1,7 @@
 package ui;
 
+import chess.ChessGame;
+import com.google.gson.Gson;
 import model.AuthData;
 import model.GameData;
 import model.UserData;
@@ -18,6 +20,7 @@ public class ChessClient {
     private final Map<String, String> auths = new HashMap<>();
     private final Map<Integer, String> games = new HashMap<>();
     private String userAuth = null;
+    private final Map<Integer, Integer> gameIDs = new HashMap<>();
 
     public ChessClient(String serverUrl) {
         server = new ServerFacade(serverUrl);
@@ -34,6 +37,9 @@ public class ChessClient {
                 case "login" -> login(params);
                 case "logout" -> logout();
                 case "create" -> create(params);
+                case "list" -> list();
+                case "join" -> join(params);
+                case "observe" -> observe(params);
                 case "quit" -> "quit";
                 default -> help();
             };
@@ -92,6 +98,57 @@ public class ChessClient {
             GameData game = server.createGame(userAuth, gameName);
             games.put(game.gameID(), gameName);
             return String.format("Created game '%s'", gameName);
+        }
+        throw new Exception("Error: expected one parameter");
+    }
+
+    public String list() throws Exception {
+        assertSignedIn();
+        var games = server.listGames(userAuth);
+        var result = new StringBuilder();
+        int counter = 1;
+        gameIDs.clear();
+        for (var game : games) {
+            result.append(String.format("%d: %s\n ", counter, game.gameName()));
+            gameIDs.put(counter, game.gameID());
+            counter++;
+        }
+        return result.toString();
+    }
+
+    public String join(String... params) throws Exception {
+        assertSignedIn();
+        if (params.length == 2) {
+            int index = Integer.parseInt(params[0]);
+            if (!gameIDs.containsKey(index)) {
+                throw new Exception("Error: Game does not exist");
+            }
+            int gameID = gameIDs.get(index);
+            ChessGame.TeamColor color;
+            if (params[1].equalsIgnoreCase("BLACK")) {
+                color = ChessGame.TeamColor.BLACK;
+            }
+            else if (params[1].equalsIgnoreCase("WHITE")) {
+                color = ChessGame.TeamColor.WHITE;
+            }
+            else {
+                throw new Exception("Error: color does not exist");
+            }
+            server.joinGame(userAuth, String.valueOf(gameID), color);
+            return "Successfully joined game";
+        }
+        throw new Exception("Error: expected two parameters");
+    }
+
+    public String observe(String... params) throws Exception {
+        assertSignedIn();
+        if (params.length == 1) {
+            int index = Integer.parseInt(params[0]);
+            if (!gameIDs.containsKey(index)) {
+                throw new Exception("Error: Game does not exist");
+            }
+            int gameID = gameIDs.get(index);
+            return "Observing game";
         }
         throw new Exception("Error: expected one parameter");
     }
