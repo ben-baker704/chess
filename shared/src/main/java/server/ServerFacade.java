@@ -1,5 +1,6 @@
 package server;
 
+import chess.ChessGame;
 import com.google.gson.Gson;
 import model.AuthData;
 import model.GameData;
@@ -48,6 +49,13 @@ public class ServerFacade {
         record createGameRequest(String gameName) {}
         var request = new createGameRequest(gameName);
         return this.makeRequest("POST", path, request, GameData.class, auth);
+    }
+
+    public void joinGame(String auth, String gameID, ChessGame.TeamColor color) throws Exception {
+        var path = "/game";
+        record joinGameRequest(String gameID, ChessGame.TeamColor playerColor) {}
+        var request = new joinGameRequest(gameID, color);
+        this.makeRequest("PUT", path, request, null, auth);
     }
 
     public void clear() throws Exception {

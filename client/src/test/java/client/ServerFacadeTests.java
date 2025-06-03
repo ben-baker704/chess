@@ -1,7 +1,9 @@
 package client;
 
+import chess.ChessGame;
 import dataaccess.DataAccessException;
 import model.AuthData;
+import model.GameData;
 import model.UserData;
 import org.junit.jupiter.api.*;
 import server.Server;
@@ -98,6 +100,20 @@ public class ServerFacadeTests {
     @Test
     void createGameNegative() throws Exception {
         Assertions.assertThrows(Exception.class, () -> facade.createGame("invalid", "game"));
+    }
+
+    @Test
+    void joinGamePositive() throws Exception {
+        UserData userData = new UserData("user", "pass", "mail");
+        AuthData data = facade.register(userData);
+        GameData game = facade.createGame(data.authToken(), "game");
+        Assertions.assertDoesNotThrow(() ->
+                facade.joinGame(data.authToken(), String.valueOf(game.gameID()), ChessGame.TeamColor.BLACK));
+    }
+
+    @Test
+    void joinGameNegative() throws Exception {
+        Assertions.assertThrows(Exception.class, () -> facade.joinGame("invalid", "1", null));
     }
 
     @Test
