@@ -9,7 +9,6 @@ import model.UserData;
 
 import java.io.*;
 import java.net.*;
-import java.util.ArrayList;
 import java.util.Collection;
 
 
@@ -39,22 +38,22 @@ public class ServerFacade {
 
     public Collection<GameData> listGames(String auth) throws Exception {
         var path = "/game";
-        record listGameResponse(Collection<GameData> games) {}
-        var response = this.makeRequest("GET", path, null, listGameResponse.class, auth);
+        record ListGameResponse(Collection<GameData> games) {}
+        var response = this.makeRequest("GET", path, null, ListGameResponse.class, auth);
         return response.games();
     }
 
     public GameData createGame(String auth, String gameName) throws Exception {
         var path = "/game";
-        record createGameRequest(String gameName) {}
-        var request = new createGameRequest(gameName);
+        record CreateGameRequest(String gameName) {}
+        var request = new CreateGameRequest(gameName);
         return this.makeRequest("POST", path, request, GameData.class, auth);
     }
 
     public void joinGame(String auth, String gameID, ChessGame.TeamColor color) throws Exception {
         var path = "/game";
-        record joinGameRequest(String gameID, ChessGame.TeamColor playerColor) {}
-        var request = new joinGameRequest(gameID, color);
+        record JoinGameRequest(String gameID, ChessGame.TeamColor playerColor) {}
+        var request = new JoinGameRequest(gameID, color);
         this.makeRequest("PUT", path, request, null, auth);
     }
 
