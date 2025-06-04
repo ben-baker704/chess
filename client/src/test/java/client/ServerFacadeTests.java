@@ -92,6 +92,7 @@ public class ServerFacadeTests {
 
     @Test
     void createGamePositive() throws Exception {
+        facade.clear();
         UserData userData = new UserData("user", "pass", "mail");
         AuthData data = facade.register(userData);
         Assertions.assertDoesNotThrow(() -> facade.createGame(data.authToken(), "game"));
