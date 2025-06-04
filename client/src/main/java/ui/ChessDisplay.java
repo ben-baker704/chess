@@ -29,8 +29,9 @@ public class ChessDisplay {
         System.out.println();
     }
 
-    private void makeSquare(ChessPiece piece, int column, char row) {
-        boolean lighterSquare = (column + (row - 'a' + 1)) % 2 != 0;
+    private void makeSquare(ChessPiece piece, int row, char column) {
+        int col = column - 'a' + 1;
+        boolean lighterSquare = (col + row) % 2 != 0;
         String backgroundColor = lighterSquare ? EscapeSequences.SET_BG_COLOR_LIGHT_GREY :
                 EscapeSequences.SET_BG_COLOR_DARK_GREY;
         String pieceType = getPieceSequence(piece);
@@ -39,8 +40,8 @@ public class ChessDisplay {
 
     private void printRowChars(char[] chars) {
         System.out.print("   ");
-        for (char character : chars) {
-            System.out.print(" " + character + " ");
+        for (char c : chars) {
+            System.out.print("\u2003" + c + "\u2007");
         }
         System.out.println();
     }

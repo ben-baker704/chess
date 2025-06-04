@@ -110,7 +110,8 @@ public class ChessClient {
         int counter = 1;
         gameIDs.clear();
         for (var game : games) {
-            result.append(String.format("%d: %s\n ", counter, game.gameName()));
+            result.append(String.format("%d: %s BLACK: %s WHITE: %s\n", counter, game.gameName(),
+                    game.blackUsername(), game.whiteUsername()));
             gameIDs.put(counter, game.gameID());
             counter++;
         }
@@ -137,7 +138,9 @@ public class ChessClient {
             }
             server.joinGame(userAuth, String.valueOf(gameID), color);
             ChessDisplay display = new ChessDisplay();
-            display.draw(new ChessBoard(), color);
+            ChessBoard board = new ChessBoard();
+            board.resetBoard();
+            display.draw(board, color);
             return "Successfully joined game";
         }
         throw new Exception("Error: expected two parameters");
@@ -152,7 +155,9 @@ public class ChessClient {
             }
             int gameID = gameIDs.get(index);
             ChessDisplay display = new ChessDisplay();
-            display.draw(new ChessBoard(), ChessGame.TeamColor.WHITE);
+            ChessBoard board = new ChessBoard();
+            board.resetBoard();
+            display.draw(board, ChessGame.TeamColor.WHITE);
             return "Observing game";
         }
         throw new Exception("Error: expected one parameter");
