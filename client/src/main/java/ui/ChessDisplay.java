@@ -15,6 +15,22 @@ public class ChessDisplay {
         System.out.println();
     }
 
+    private void makeSquare(ChessPiece piece, int column, char row) {
+        boolean lighterSquare = (column + (row - 'a' + 1)) % 2 == 0;
+        String backgroundColor = lighterSquare ? EscapeSequences.SET_BG_COLOR_LIGHT_GREY :
+                EscapeSequences.SET_BG_COLOR_DARK_GREY;
+        String pieceType = getPieceSequence(piece);
+        System.out.print(backgroundColor + pieceType + EscapeSequences.RESET_BG_COLOR);
+    }
+
+    private void printRowChars(char[] chars) {
+        System.out.print("   ");
+        for (char character : chars) {
+            System.out.print(" " + character + " ");
+        }
+        System.out.println();
+    }
+
     private String getPieceSequence(ChessPiece piece) {
         if (piece == null) {
             return EscapeSequences.EMPTY;
