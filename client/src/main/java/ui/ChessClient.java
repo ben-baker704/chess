@@ -1,5 +1,6 @@
 package ui;
 
+import chess.ChessBoard;
 import chess.ChessGame;
 import com.google.gson.Gson;
 import model.AuthData;
@@ -135,6 +136,8 @@ public class ChessClient {
                 throw new Exception("Error: color does not exist");
             }
             server.joinGame(userAuth, String.valueOf(gameID), color);
+            ChessDisplay display = new ChessDisplay();
+            display.draw(new ChessBoard(), color);
             return "Successfully joined game";
         }
         throw new Exception("Error: expected two parameters");
@@ -148,6 +151,8 @@ public class ChessClient {
                 throw new Exception("Error: Game does not exist");
             }
             int gameID = gameIDs.get(index);
+            ChessDisplay display = new ChessDisplay();
+            display.draw(new ChessBoard(), ChessGame.TeamColor.WHITE);
             return "Observing game";
         }
         throw new Exception("Error: expected one parameter");
