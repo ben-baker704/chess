@@ -121,27 +121,33 @@ public class ChessClient {
     public String join(String... params) throws Exception {
         assertSignedIn();
         if (params.length == 2) {
-            int index = Integer.parseInt(params[0]);
-            if (!gameIDs.containsKey(index)) {
-                throw new Exception("Error: Game does not exist");
+            try {
+                int index = Integer.parseInt(params[0]);
+                if (!gameIDs.containsKey(index)) {
+                    throw new Exception("Error: Game does not exist");
+                }
+                int gameID = gameIDs.get(index);
+                ChessGame.TeamColor color;
+                if (params[1].equalsIgnoreCase("BLACK")) {
+                    color = ChessGame.TeamColor.BLACK;
+                }
+                else if (params[1].equalsIgnoreCase("WHITE")) {
+                    color = ChessGame.TeamColor.WHITE;
+                }
+                else {
+                    throw new Exception("Error: color does not exist");
+                }
+                server.joinGame(userAuth, String.valueOf(gameID), color);
+                ChessDisplay display = new ChessDisplay();
+                ChessBoard board = new ChessBoard();
+                board.resetBoard();
+                display.draw(board, color);
+                return "Successfully joined game";
             }
-            int gameID = gameIDs.get(index);
-            ChessGame.TeamColor color;
-            if (params[1].equalsIgnoreCase("BLACK")) {
-                color = ChessGame.TeamColor.BLACK;
+            catch (Exception e) {
+                throw new Exception("Error: Invalid gameID");
             }
-            else if (params[1].equalsIgnoreCase("WHITE")) {
-                color = ChessGame.TeamColor.WHITE;
-            }
-            else {
-                throw new Exception("Error: color does not exist");
-            }
-            server.joinGame(userAuth, String.valueOf(gameID), color);
-            ChessDisplay display = new ChessDisplay();
-            ChessBoard board = new ChessBoard();
-            board.resetBoard();
-            display.draw(board, color);
-            return "Successfully joined game";
+
         }
         throw new Exception("Error: expected two parameters");
     }
