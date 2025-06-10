@@ -7,10 +7,11 @@ import org.eclipse.jetty.websocket.api.Session;
 import websocket.commands.UserGameCommand;
 import websocket.messages.ServerMessage;
 import java.io.IOException;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ConnectionManager {
-    private final ConcurrentHashMap<Integer, ConcurrentHashMap<String, Connection>>
+    private final Map<Integer, Map<String, Connection>>
             connections = new ConcurrentHashMap<>();
 
     public void add(int gameID, String visitorName, Session session) {

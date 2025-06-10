@@ -71,10 +71,22 @@ public class WebSocketHandler {
     }
 
     private void leave(UserGameCommand command) throws Exception {
-
+        String user = authDAO.getUsername(command.getAuthToken());
+        int gameID = command.getGameID();
+        connections.remove(gameID, user);
+        ServerMessage notification = new NotificationMessage(user + "left game");
+        connections.broadcast(gameID, user, new Gson().toJson(notification));
     }
 
     private void resign(UserGameCommand command) throws Exception {
-
+        String user = authDAO.getUsername(command.getAuthToken());
+        int gameID = command.getGameID();
+        ChessGame game = gameDAO.getGame(Integer.toString(gameID)).game();
+        if (game == null) {
+            throw new Exception("Error: game does not exist");
+        }
+        gameDAO.updateGame(Integer.toString(gameID), game.getTeamTurn(), user);
+        ServerMessage resignMessage = new NotificationMessage(user + "resigned");
+        connections.broadcast(gameID, null, new Gson().toJson(resignMessage));
     }
 }
