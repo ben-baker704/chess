@@ -1,6 +1,7 @@
 package websocket;
 
 import chess.ChessGame;
+import chess.ChessMove;
 import com.google.gson.Gson;
 import dataaccess.AuthDAO;
 import dataaccess.GameDAO;
@@ -54,7 +55,19 @@ public class WebSocketHandler {
     }
 
     private void makeMove(UserGameCommand command) throws Exception {
+        String user = authDAO.getUsername(command.getAuthToken());
+        int gameID = command.getGameID();
+        ChessGame game = gameDAO.getGame(Integer.toString(gameID)).game();
+        if (game == null) {
+            throw new Exception("Error: game does not exist");
+        }
 
+        ChessMove move = command.getMove();
+        game.makeMove(move);
+        gameDAO.updateGame(Integer.toString(gameID), game.getTeamTurn(), user);
+
+        ServerMessage update = new LoadGameMessage(game);
+        connections.broadcast(gameID, null, new Gson().toJson(update));
     }
 
     private void leave(UserGameCommand command) throws Exception {
