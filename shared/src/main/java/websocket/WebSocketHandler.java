@@ -10,6 +10,7 @@ import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import org.eclipse.jetty.websocket.api.Session;
 import websocket.commands.UserGameCommand;
+import websocket.messages.ErrorMessage;
 import websocket.messages.LoadGameMessage;
 import websocket.messages.NotificationMessage;
 import websocket.messages.ServerMessage;
@@ -31,11 +32,16 @@ public class WebSocketHandler {
     @OnWebSocketMessage
     public void onMessage(Session session, String message) throws Exception {
         UserGameCommand command = new Gson().fromJson(message, UserGameCommand.class);
-        switch (command.getCommandType()) {
-            case CONNECT -> connect(command, session);
-            case MAKE_MOVE -> makeMove(command);
-            case LEAVE -> leave(command);
-            case RESIGN -> resign(command);
+        try {
+            switch (command.getCommandType()) {
+                case CONNECT -> connect(command, session);
+                case MAKE_MOVE -> makeMove(command);
+                case LEAVE -> leave(command);
+                case RESIGN -> resign(command);
+            }
+        }
+        catch (Exception e) {
+            session.getRemote().sendString(new Gson().toJson(new ErrorMessage(e.getMessage())));
         }
     }
 
@@ -51,7 +57,7 @@ public class WebSocketHandler {
         ServerMessage loadGame = new LoadGameMessage(game);
         connections.sendMessageTo(gameID, user, new Gson().toJson(loadGame));
         ServerMessage notification = new NotificationMessage(user + "joined game");
-        connections.broadcast(gameID, user, new Gson().toJson(loadGame));
+        connections.broadcast(gameID, user, new Gson().toJson(notification));
     }
 
     private void makeMove(UserGameCommand command) throws Exception {
