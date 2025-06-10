@@ -8,7 +8,7 @@ import model.JoinData;
 import model.UserData;
 import service.UserService;
 import spark.*;
-
+import websocket.WebSocketHandler;
 import java.util.HashMap;
 import java.util.Objects;
 
@@ -32,6 +32,7 @@ public class Server {
         Spark.port(desiredPort);
 
         Spark.staticFiles.location("web");
+        Spark.webSocket("/ws", new WebSocketHandler(authDAO, gameDAO));
 
         // Register your endpoints and handle exceptions here.
         Spark.post("/user", this::register);
@@ -41,7 +42,6 @@ public class Server {
         Spark.get("/game", this::listGames);
         Spark.post("/game", this::createGame);
         Spark.put("/game", this::joinGame);
-
         Spark.awaitInitialization();
         return Spark.port();
     }
