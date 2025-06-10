@@ -30,21 +30,21 @@ public class ConnectionManager {
         }
     }
 
-//    public void broadcast(String excludeVisitorName, Notification notification) throws IOException {
-//        var removeList = new ArrayList<Connection>();
-//        for (var c : connections.values()) {
-//            if (c.session.isOpen()) {
-//                if (!c.visitorName.equals(excludeVisitorName)) {
-//                    c.send(notification.toString());
-//                }
-//            } else {
-//                removeList.add(c);
-//            }
-//        }
-//
-//        // Clean up any connections that were left open.
-//        for (var c : removeList) {
-//            connections.remove(c.visitorName);
-//        }
-//    }
+    public void broadcast(int gameID, String excludeVisitorName, String notification) throws IOException {
+        var game = connections.get(gameID);
+        if (game != null) {
+            for (var entry : game.entrySet()) {
+                if (!entry.getKey().equals(excludeVisitorName)) {
+                    entry.getValue().send(notification);
+                }
+            }
+        }
+    }
+
+    public void sendMessageTo(int gameID, String visitorName, String notification) throws IOException {
+        var connection = connections.getOrDefault(gameID, new ConcurrentHashMap<>()).get(visitorName);
+        if (connection != null) {
+            connection.send(notification);
+        }
+    }
 }
