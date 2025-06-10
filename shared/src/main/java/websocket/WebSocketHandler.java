@@ -27,6 +27,7 @@ public class WebSocketHandler {
     }
 
     private void connect(UserGameCommand command, Session session) throws Exception {
+        // VALIDATE auth and existence of game
 
     }
 
