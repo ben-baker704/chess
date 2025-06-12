@@ -74,6 +74,22 @@ public class UserService {
             throws DataAccessException {
         if (authDAO.getAuth(auth)) {
             String username = authDAO.getUsername(auth);
+            GameData game = gameDAO.getGame(gameID);
+            if (game == null) {
+                throw new DataAccessException("Error: game does not exist");
+            }
+            if (color == ChessGame.TeamColor.WHITE) {
+                String whiteUser = game.whiteUsername();
+                if (whiteUser != null && !whiteUser.equals(username)) {
+                    throw new DataAccessException("Error: Already taken");
+                }
+            }
+            else if (color == ChessGame.TeamColor.BLACK) {
+                String blackUser = game.blackUsername();
+                if (blackUser != null && !blackUser.equals(username)) {
+                    throw new DataAccessException("Error: Already taken");
+                }
+            }
             gameDAO.updateGame(gameID, color, username);
         }
         else {

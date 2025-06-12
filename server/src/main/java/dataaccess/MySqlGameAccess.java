@@ -121,6 +121,33 @@ public class MySqlGameAccess implements GameDAO {
     }
 
     @Override
+    public void clearPlayer(String gameID, String username) throws DataAccessException {
+
+        try (Connection connection = DatabaseManager.getConnection()) {
+            String sql = "";
+            GameData game = getGame(gameID);
+            if (game == null) {
+                throw new DataAccessException("Error: game not found");
+            }
+            if (username.equals(game.whiteUsername())) {
+                sql = "UPDATE game SET whiteUsername = NULL WHERE gameID = ?";
+            }
+            else if (username.equals(game.blackUsername())) {
+                sql = "UPDATE game SET blackUsername = NULL WHERE gameID = ?";
+            }
+            else {
+                return;
+            }
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setString(1, gameID);
+            statement.executeUpdate();
+        }
+        catch (Exception e) {
+            throw new DataAccessException("Error");
+        }
+    }
+
+    @Override
     public void clear() throws DataAccessException {
         String sql = "DELETE FROM game";
         try (Connection connection = DatabaseManager.getConnection();

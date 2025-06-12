@@ -107,6 +107,7 @@ public class WebSocketHandler {
         String user = authDAO.getUsername(command.getAuthToken());
         int gameID = command.getGameID();
         connections.remove(gameID, user);
+        gameDAO.clearPlayer(Integer.toString(gameID), user);
         ServerMessage notification = new NotificationMessage(user + "left game");
         connections.broadcast(gameID, user, new Gson().toJson(notification));
     }
@@ -118,7 +119,7 @@ public class WebSocketHandler {
         if (game == null) {
             throw new Exception("Error: game does not exist");
         }
-        gameDAO.updateGame(Integer.toString(gameID), game.getTeamTurn(), user);
+//        gameDAO.updateGame(Integer.toString(gameID), game.getTeamTurn(), user);
         ServerMessage resignMessage = new NotificationMessage(user + "resigned");
         connections.broadcast(gameID, null, new Gson().toJson(resignMessage));
     }
