@@ -85,13 +85,26 @@ public class MySqlGameAccess implements GameDAO {
 
     @Override
     public void updateGame(String gameID, ChessGame.TeamColor color, String username) throws DataAccessException {
-        String column = (color == ChessGame.TeamColor.WHITE) ? "whiteUsername" : "blackUsername";
-        String sql = "UPDATE game SET " + column + " = ? WHERE gameID = ? AND " + column + " IS NULL";
-        try (Connection connection = DatabaseManager.getConnection();
-            PreparedStatement statement = connection.prepareStatement(sql)) {
+        updateGame(gameID, color, username, null);
+    }
 
-            statement.setString(1, username);
-            statement.setInt(2, Integer.parseInt(gameID));
+    @Override
+    public void updateGame(String gameID, ChessGame.TeamColor color, String username, ChessGame game)
+            throws DataAccessException {
+        String json = (game != null) ? "json = ?, " : "";
+        String column = (color == ChessGame.TeamColor.WHITE) ? "whiteUsername" : "blackUsername";
+        String sql = "UPDATE game SET " + json + column +
+                " = ? WHERE gameID = ? AND (" + column + " IS NULL OR " + column + " = ?)";
+        try (Connection connection = DatabaseManager.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            int paramIndex = 1;
+
+            if (game != null) {
+            statement.setString(paramIndex++, new Gson().toJson(game));
+            }
+            statement.setString(paramIndex++, username);
+            statement.setInt(paramIndex++, Integer.parseInt(gameID));
+            statement.setString(paramIndex, username);
             int affectedRows = statement.executeUpdate();
 
             if (affectedRows == 0) {

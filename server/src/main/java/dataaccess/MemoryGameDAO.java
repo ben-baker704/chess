@@ -54,6 +54,11 @@ public class MemoryGameDAO implements GameDAO{
     }
 
     @Override
+    public void updateGame(String gameID, ChessGame.TeamColor color, String username, ChessGame game) throws DataAccessException {
+
+    }
+
+    @Override
     public void clear() throws DataAccessException {
         games.clear();
     }

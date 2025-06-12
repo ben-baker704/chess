@@ -4,6 +4,8 @@ import chess.ChessGame;
 import chess.ChessMove;
 import com.google.gson.Gson;
 import dataaccess.AuthDAO;
+import dataaccess.DataAccessException;
+import dataaccess.DatabaseManager;
 import dataaccess.GameDAO;
 import org.eclipse.jetty.server.Authentication;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
@@ -15,6 +17,8 @@ import websocket.messages.LoadGameMessage;
 import websocket.messages.NotificationMessage;
 import websocket.messages.ServerMessage;
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 
 
 @WebSocket
@@ -41,7 +45,8 @@ public class WebSocketHandler {
             }
         }
         catch (Exception e) {
-            session.getRemote().sendString(new Gson().toJson(new ErrorMessage(e.getMessage())));
+            String errorMessage = (e.getMessage() == null) ? "Unknown Error" : e.getMessage();
+            session.getRemote().sendString(new Gson().toJson(new ErrorMessage(errorMessage)));
         }
     }
 
@@ -70,7 +75,7 @@ public class WebSocketHandler {
 
         ChessMove move = command.getMove();
         game.makeMove(move);
-        gameDAO.updateGame(Integer.toString(gameID), game.getTeamTurn(), user);
+        gameDAO.updateGame(Integer.toString(gameID), game.getTeamTurn(), user, game);
 
         ServerMessage update = new LoadGameMessage(game);
         connections.broadcast(gameID, null, new Gson().toJson(update));
