@@ -130,4 +130,17 @@ public class MySqlGameAccess implements GameDAO {
             throw new DataAccessException("Can't clear games");
         }
     }
+
+    public void saveGameState(String gameID, ChessGame game) throws DataAccessException {
+        String sql = "UPDATE game SET json = ? WHERE gameID = ?";
+        try (Connection conn = DatabaseManager.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, new Gson().toJson(game));
+            stmt.setInt(2, Integer.parseInt(gameID));
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new DataAccessException("Error: Can't update gameBoard");
+        }
+    }
+
 }

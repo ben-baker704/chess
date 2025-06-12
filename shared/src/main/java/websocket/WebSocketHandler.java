@@ -3,10 +3,7 @@ package websocket;
 import chess.ChessGame;
 import chess.ChessMove;
 import com.google.gson.Gson;
-import dataaccess.AuthDAO;
-import dataaccess.DataAccessException;
-import dataaccess.DatabaseManager;
-import dataaccess.GameDAO;
+import dataaccess.*;
 import org.eclipse.jetty.server.Authentication;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
@@ -68,17 +65,42 @@ public class WebSocketHandler {
     private void makeMove(UserGameCommand command) throws Exception {
         String user = authDAO.getUsername(command.getAuthToken());
         int gameID = command.getGameID();
-        ChessGame game = gameDAO.getGame(Integer.toString(gameID)).game();
+        var gameData = gameDAO.getGame(Integer.toString(gameID));
+        ChessGame game = gameData.game();
         if (game == null) {
             throw new Exception("Error: game does not exist");
         }
 
+        ChessGame.TeamColor userTeam = null;
+        if (user.equals(gameData.whiteUsername())) {
+            userTeam = ChessGame.TeamColor.WHITE;
+        }
+        else if (user.equals(gameData.blackUsername())) {
+            userTeam = ChessGame.TeamColor.BLACK;
+        }
+        else {
+            throw new Exception("Error: Observer does not make moves");
+        }
+
+        if (userTeam != game.getTeamTurn()) {
+            throw new Exception("Error: Other team's turn");
+        }
+
         ChessMove move = command.getMove();
         game.makeMove(move);
-        gameDAO.updateGame(Integer.toString(gameID), game.getTeamTurn(), user, game);
+
+        if (gameDAO instanceof MySqlGameAccess sqlGameAccess) {
+            sqlGameAccess.saveGameState(Integer.toString(gameID), game);
+        }
+        else {
+            throw new DataAccessException("Error");
+        }
 
         ServerMessage update = new LoadGameMessage(game);
         connections.broadcast(gameID, null, new Gson().toJson(update));
+
+        ServerMessage notification = new NotificationMessage(user + "moved piece");
+        connections.broadcast(gameID, user, new Gson().toJson(notification));
     }
 
     private void leave(UserGameCommand command) throws Exception {
