@@ -8,9 +8,8 @@ import model.JoinData;
 import model.UserData;
 import service.UserService;
 import spark.*;
-import websocket.WebSocketHandler;
+
 import java.util.HashMap;
-import java.util.Objects;
 
 public class Server {
     private ErrorMessage error = new ErrorMessage();

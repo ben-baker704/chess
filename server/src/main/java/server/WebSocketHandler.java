@@ -1,21 +1,18 @@
-package websocket;
+package server;
 
 import chess.ChessGame;
 import chess.ChessMove;
 import com.google.gson.Gson;
 import dataaccess.*;
-import org.eclipse.jetty.server.Authentication;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import org.eclipse.jetty.websocket.api.Session;
+import websocket.ConnectionManager;
 import websocket.commands.UserGameCommand;
 import websocket.messages.ErrorMessage;
 import websocket.messages.LoadGameMessage;
 import websocket.messages.NotificationMessage;
 import websocket.messages.ServerMessage;
-import java.io.IOException;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 
 
 @WebSocket
