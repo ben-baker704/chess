@@ -98,7 +98,7 @@ public class WebSocketHandler {
             sqlGameAccess.saveGameState(Integer.toString(gameID), game);
         }
         else {
-            throw new DataAccessException("Error");
+            throw new DataAccessException("Make Move Error");
         }
 
         ServerMessage update = new LoadGameMessage(game);
@@ -132,6 +132,12 @@ public class WebSocketHandler {
             throw new Exception("Error: game is already over");
         }
         game.setGameOver(true);
+        if (gameDAO instanceof MySqlGameAccess sqlGameAccess) {
+            sqlGameAccess.saveGameState(Integer.toString(gameID), game);
+        }
+        else {
+            throw new DataAccessException("Resign Error");
+        }
 //        gameDAO.updateGame(Integer.toString(gameID), game.getTeamTurn(), user);
         ServerMessage resignMessage = new NotificationMessage(user + "resigned");
         connections.broadcast(gameID, null, new Gson().toJson(resignMessage));
