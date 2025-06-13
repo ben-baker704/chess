@@ -13,6 +13,7 @@ import java.util.Objects;
 public class ChessGame {
     private TeamColor teamTurn = TeamColor.WHITE;
     private ChessBoard gameBoard = new ChessBoard();
+    private boolean gameOver = false;
     public ChessGame(ChessGame other) {
         this.teamTurn = other.teamTurn;
         this.gameBoard = new ChessBoard(other.gameBoard);
@@ -49,6 +50,14 @@ public class ChessGame {
     @Override
     public int hashCode() {
         return Objects.hash(teamTurn, gameBoard);
+    }
+
+    public boolean isGameOver() {
+        return gameOver;
+    }
+
+    public void setGameOver(boolean gameOver) {
+        this.gameOver = gameOver;
     }
 
     /**
@@ -174,6 +183,7 @@ public class ChessGame {
         if (!isInCheck(teamColor)) {
             return false;
         }
+        gameOver = true;
         return checkmateStalemateChecker(teamColor);
     }
 
@@ -188,6 +198,7 @@ public class ChessGame {
         if (isInCheck(teamColor)) {
             return false;
         }
+        gameOver = true;
         return checkmateStalemateChecker(teamColor);
     }
 

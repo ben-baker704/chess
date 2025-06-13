@@ -67,8 +67,13 @@ public class WebSocketHandler {
         int gameID = command.getGameID();
         var gameData = gameDAO.getGame(Integer.toString(gameID));
         ChessGame game = gameData.game();
+
         if (game == null) {
             throw new Exception("Error: game does not exist");
+        }
+
+        if (game.isGameOver()) {
+            throw new Exception("Error: game over");
         }
 
         ChessGame.TeamColor userTeam = null;
@@ -115,10 +120,18 @@ public class WebSocketHandler {
     private void resign(UserGameCommand command) throws Exception {
         String user = authDAO.getUsername(command.getAuthToken());
         int gameID = command.getGameID();
-        ChessGame game = gameDAO.getGame(Integer.toString(gameID)).game();
+        var gameData = gameDAO.getGame(Integer.toString(gameID));
+        ChessGame game = gameData.game();
         if (game == null) {
             throw new Exception("Error: game does not exist");
         }
+        if (!user.equals(gameData.whiteUsername()) && !user.equals(gameData.blackUsername())) {
+            throw new Exception("Error: Observers do not resign");
+        }
+        if (game.isGameOver()) {
+            throw new Exception("Error: game is already over");
+        }
+        game.setGameOver(true);
 //        gameDAO.updateGame(Integer.toString(gameID), game.getTeamTurn(), user);
         ServerMessage resignMessage = new NotificationMessage(user + "resigned");
         connections.broadcast(gameID, null, new Gson().toJson(resignMessage));
